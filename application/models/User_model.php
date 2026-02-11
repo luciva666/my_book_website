@@ -19,4 +19,17 @@ class User_model extends CI_Model {
         }
         return false;
     }
+
+    public function get($id) {
+        return $this->db->get_where('users', ['id' => $id])->row();
+    }
+
+    public function update_user($id, $data) {
+        if (isset($data['password']) && $data['password'] !== '') {
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        } else {
+            unset($data['password']);
+        }
+        return $this->db->where('id', $id)->update('users', $data);
+    }
 }

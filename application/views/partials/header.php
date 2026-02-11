@@ -40,8 +40,8 @@
             </ul>
           </li>
         <?php else: ?>
-          <li class="nav-item"><a class="nav-link" href="<?php echo site_url('auth/login'); ?>">Login</a></li>
-          <li class="nav-item"><a class="nav-link" href="<?php echo site_url('auth/register'); ?>">Register</a></li>
+          <li class="nav-item"><a class="nav-link" style="color:white;" href="<?php echo site_url('auth/login'); ?>">Login</a></li>
+          <li class="nav-item"><a class="nav-link" style="color:white;" href="<?php echo site_url('auth/register'); ?>">Register</a></li>
         <?php endif; ?>
       </ul>
     </div>

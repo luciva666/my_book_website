@@ -20,10 +20,20 @@ class Story_model extends CI_Model {
 
     public function update($id, $data) {
         $data['updated_at'] = date('Y-m-d H:i:s');
-        return $this->db->where('id', $id)->update($this->table, $data);
+        $this->db->where('id', $id);
+        if (isset($data['user_id'])) {
+            // if caller passes user_id in data, enforce it and then remove from payload
+            $this->db->where('user_id', $data['user_id']);
+            unset($data['user_id']);
+        }
+        return $this->db->update($this->table, $data);
     }
 
-    public function delete($id) {
-        return $this->db->delete($this->table, ['id' => $id]);
+    public function delete($id, $user_id = null) {
+        $this->db->where('id', $id);
+        if ($user_id !== null) {
+            $this->db->where('user_id', $user_id);
+        }
+        return $this->db->delete($this->table);
     }
 }

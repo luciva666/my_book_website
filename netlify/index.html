@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stories - My Book Website</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="nav-brand">📖 My Stories</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li id="auth-section">
+                    <a href="/auth/login.html">Login</a> | 
+                    <a href="/auth/register.html">Register</a>
+                </li>
+                <li id="user-section">
+                    <a href="/create-story.html">New Story</a> | 
+                    <a href="/profile.html">Profile</a> | 
+                    <a href="#" onclick="handleLogout(); return false;">Logout</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div id="error-message" class="alert-error"></div>
+        <div id="success-message" class="alert-success"></div>
+
+        <h1>Welcome to My Stories</h1>
+        <p>Discover and read amazing stories from our community.</p>
+
+        <div id="stories-container">
+            <div class="spinner"></div> Loading stories...
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        async function loadStories() {
+            try {
+                const data = await API.getStories();
+                const container = document.getElementById('stories-container');
+                
+                if (!data.stories || data.stories.length === 0) {
+                    container.innerHTML = '<p>No stories yet. Be the first to create one!</p>';
+                    return;
+                }
+
+                let html = '<div class="stories-grid">';
+                data.stories.forEach(story => {
+                    html += `
+                        <div class="story-card">
+                            ${story.cover_image ? `<img src="${story.cover_image}" alt="${story.title}" class="story-card-image">` : ''}
+                            <div class="story-card-body">
+                                <h3 class="story-card-title">
+                                    <a href="/story-view.html?id=${story.id}">${escapeHtml(story.title)}</a>
+                                </h3>
+                                <p class="story-card-author">by ${escapeHtml(story.author.name)}</p>
+                                <p class="story-card-excerpt">${escapeHtml(story.body)}</p>
+                                <p class="story-card-meta">${story.episode_count} episode(s)</p>
+                                <div class="story-card-actions">
+                                    <a href="/story-view.html?id=${story.id}">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } catch (error) {
+                showError(error.message);
+                document.getElementById('stories-container').innerHTML = '<p>Error loading stories.</p>';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function handleLogout() {
+            try {
+                await API.logout();
+                showSuccess('Logged out successfully');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        loadStories();
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Story - My Stories</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="nav-brand">📖 My Stories</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li id="auth-section">
+                    <a href="/auth/login.html">Login</a> | 
+                    <a href="/auth/register.html">Register</a>
+                </li>
+                <li id="user-section">
+                    <a href="/create-story.html">New Story</a> | 
+                    <a href="/profile.html">Profile</a> | 
+                    <a href="#" onclick="handleLogout(); return false;">Logout</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <div id="error-message" class="alert-error"></div>
+            <div id="success-message" class="alert-success"></div>
+
+            <h1>Create New Story</h1>
+
+            <form id="createStoryForm">
+                <div class="form-group">
+                    <label for="title">Story Title</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="body">Story Description</label>
+                    <textarea id="body" name="body" required placeholder="Write a brief description of your story..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="coverImage">Cover Image URL (optional)</label>
+                    <input type="url" id="coverImage" name="coverImage" placeholder="https://...">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create Story</button>
+                    <a href="/" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Check if user is authenticated
+        if (!AuthManager.isAuthenticated()) {
+            window.location.href = '/auth/login.html';
+        }
+
+        document.getElementById('createStoryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('title').value.trim();
+            const body = document.getElementById('body').value.trim();
+            const coverImage = document.getElementById('coverImage').value.trim();
+
+            if (!title || !body) {
+                showError('Please fill in all required fields');
+                return;
+            }
+
+            try {
+                const button = e.target.querySelector('button[type="submit"]');
+                button.disabled = true;
+                button.innerHTML = '<span class="spinner"></span> Creating...';
+
+                const data = await API.createStory(title, body, coverImage || null);
+                showSuccess('Story created successfully! Redirecting...');
+
+                setTimeout(() => {
+                    window.location.href = `/story-view.html?id=${data.story.id}`;
+                }, 1000);
+            } catch (error) {
+                showError(error.message);
+                const button = e.target.querySelector('button[type="submit"]');
+                button.disabled = false;
+                button.innerHTML = 'Create Story';
+            }
+        });
+
+        async function handleLogout() {
+            try {
+                await API.logout();
+                showSuccess('Logged out successfully');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+    </script>
+</body>
+</html>

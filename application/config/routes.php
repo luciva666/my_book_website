@@ -57,3 +57,20 @@ $route['auth/register'] = 'auth/register';
 $route['auth/login'] = 'auth/login';
 $route['auth/logout'] = 'auth/logout';
 
+// API Routes
+$route['api/auth/register'] = 'AuthApi/register';
+$route['api/auth/login'] = 'AuthApi/login';
+$route['api/auth/logout'] = 'AuthApi/logout';
+$route['api/auth/profile'] = 'AuthApi/profile';
+
+$route['api/stories'] = 'StoriesApi/index';
+$route['api/stories/create'] = 'StoriesApi/create';
+$route['api/stories/(:num)'] = 'StoriesApi/view/$1';
+$route['api/stories/(:num)/update'] = 'StoriesApi/update/$1';
+$route['api/stories/(:num)/delete'] = 'StoriesApi/delete/$1';
+
+$route['api/episodes/(:num)'] = 'EpisodesApi/view/$1';
+$route['api/episodes/story/(:num)/create'] = 'EpisodesApi/create/$1';
+$route['api/episodes/(:num)/update'] = 'EpisodesApi/update/$1';
+$route['api/episodes/(:num)/delete'] = 'EpisodesApi/delete/$1';
+

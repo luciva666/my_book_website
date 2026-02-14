@@ -55,3 +55,4 @@
 		</div>
 	</article>
 <?php $this->load->view('partials/footer'); ?>
+    
